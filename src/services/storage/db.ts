@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS, EMPTY_QUEUE_STATE } from '@/types';
 import type { GlobalSettings, PersistedQueueState } from '@/types';
 
 const DB_NAME = 'nexdance';
-const DB_VERSION = 2; // Incremented for audioFiles store
+const DB_VERSION = 3; // Bumped to ensure audioFiles store exists
 
 export const STORES = {
   tracks: 'tracks',
@@ -20,7 +20,19 @@ export const STORES = {
 let dbInstance: IDBDatabase | null = null;
 
 export async function getDB(): Promise<IDBDatabase> {
-  if (dbInstance) return dbInstance;
+  // Check if cached instance has all required stores
+  if (dbInstance) {
+    const hasAllStores = Object.values(STORES).every((store) =>
+      dbInstance!.objectStoreNames.contains(store)
+    );
+    if (hasAllStores) {
+      return dbInstance;
+    }
+    // Close stale connection to force upgrade
+    console.log('Database missing stores, forcing upgrade...');
+    dbInstance.close();
+    dbInstance = null;
+  }
 
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
