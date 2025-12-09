@@ -52,11 +52,26 @@ class AudioEngine {
 
       // Initialize Signalsmith-Stretch
       // Returns an AudioWorkletNode configured for sample playback
-      this.stretchNode = await SignalsmithStretch(this.audioContext, {
+      const node = await SignalsmithStretch(this.audioContext, {
         numberOfInputs: 0, // No live input (sample playback only)
         numberOfOutputs: 1,
         outputChannelCount: [2], // Stereo output
       });
+
+      // Debug: log the returned node to check its methods
+      console.log('SignalsmithStretch node:', node);
+      console.log('Has setState:', typeof node.setState);
+      console.log('Has getState:', typeof node.getState);
+
+      // Verify the node has required methods
+      if (typeof node.setState !== 'function' || typeof node.getState !== 'function') {
+        throw new Error(
+          'SignalsmithStretch node missing setState/getState methods. ' +
+            `Got: setState=${typeof node.setState}, getState=${typeof node.getState}`
+        );
+      }
+
+      this.stretchNode = node;
 
       // Connect stretch node to gain
       this.stretchNode.connect(this.gainNode!);
@@ -69,15 +84,28 @@ class AudioEngine {
     }
   }
 
-  // ==================== Track Loading ====================
-
-  async loadTrack(audioBuffer: AudioBuffer): Promise<void> {
+  // Helper to ensure stretch node is ready
+  private ensureReady(): void {
     if (!this.isInitialized || !this.stretchNode) {
       throw new Error('AudioEngine not initialized');
     }
+    if (typeof this.stretchNode.setState !== 'function') {
+      throw new Error(
+        'AudioEngine stretchNode not ready - setState method not available. ' +
+          'This may indicate a WASM loading issue.'
+      );
+    }
+  }
 
-    // Stop any current playback
-    await this.pause();
+  // ==================== Track Loading ====================
+
+  async loadTrack(audioBuffer: AudioBuffer): Promise<void> {
+    this.ensureReady();
+
+    // Stop any current playback (only if we have a loaded track)
+    if (this.currentDuration > 0) {
+      await this.pause();
+    }
 
     try {
       // Extract channel data as Float32Arrays
@@ -91,7 +119,7 @@ class AudioEngine {
       this.currentDuration = duration;
 
       // Configure Signalsmith-Stretch with the sample
-      await this.stretchNode.setState({
+      await this.stretchNode!.setState({
         sample: {
           buffers: [leftChannel, rightChannel],
           endPosition: duration,
@@ -137,6 +165,7 @@ class AudioEngine {
 
   async play(): Promise<void> {
     if (!this.stretchNode || !this.audioContext) return;
+    if (typeof this.stretchNode.setState !== 'function') return;
 
     // Resume AudioContext if suspended (browser autoplay policy)
     if (this.audioContext.state === 'suspended') {
@@ -154,6 +183,7 @@ class AudioEngine {
 
   async pause(): Promise<void> {
     if (!this.stretchNode) return;
+    if (typeof this.stretchNode.setState !== 'function') return;
 
     await this.stretchNode.setState({
       sample: { playing: false },
@@ -166,6 +196,7 @@ class AudioEngine {
 
   async seek(time: number): Promise<void> {
     if (!this.stretchNode) return;
+    if (typeof this.stretchNode.setState !== 'function') return;
 
     const clampedTime = Math.max(0, Math.min(time, this.currentDuration));
 
@@ -186,6 +217,7 @@ class AudioEngine {
 
   async setSpeed(speed: number): Promise<void> {
     if (!this.stretchNode) return;
+    if (typeof this.stretchNode.setState !== 'function') return;
 
     const clampedSpeed = Math.max(0.5, Math.min(2.0, speed));
     this.currentSpeed = clampedSpeed;
@@ -214,6 +246,7 @@ class AudioEngine {
 
     const poll = async () => {
       if (!this.isPlaying || !this.stretchNode) return;
+      if (typeof this.stretchNode.getState !== 'function') return;
 
       try {
         const state = await this.stretchNode.getState();
