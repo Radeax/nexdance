@@ -96,3 +96,49 @@ export async function updateTrackPlayCount(id: string): Promise<void> {
     await saveTrack(track);
   }
 }
+
+// ==================== Audio Blob Storage ====================
+
+export async function getTrackAudioBlob(trackId: string): Promise<Blob | undefined> {
+  const db = await getDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORES.audioFiles, 'readonly');
+    const request = tx.objectStore(STORES.audioFiles).get(trackId);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function saveTrackAudioBlob(trackId: string, blob: Blob): Promise<void> {
+  const db = await getDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORES.audioFiles, 'readwrite');
+    tx.objectStore(STORES.audioFiles).put(blob, trackId);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+export async function deleteTrackAudioBlob(trackId: string): Promise<void> {
+  const db = await getDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORES.audioFiles, 'readwrite');
+    tx.objectStore(STORES.audioFiles).delete(trackId);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/**
+ * Delete a track and its audio blob together
+ */
+export async function deleteTrackWithAudio(trackId: string): Promise<void> {
+  const db = await getDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([STORES.tracks, STORES.audioFiles], 'readwrite');
+    tx.objectStore(STORES.tracks).delete(trackId);
+    tx.objectStore(STORES.audioFiles).delete(trackId);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}

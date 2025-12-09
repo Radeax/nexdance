@@ -4,10 +4,11 @@ import { DEFAULT_SETTINGS, EMPTY_QUEUE_STATE } from '@/types';
 import type { GlobalSettings, PersistedQueueState } from '@/types';
 
 const DB_NAME = 'nexdance';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Incremented for audioFiles store
 
 export const STORES = {
   tracks: 'tracks',
+  audioFiles: 'audioFiles',
   danceStyles: 'danceStyles',
   navigationGroups: 'navigationGroups',
   tabProfiles: 'tabProfiles',
@@ -44,6 +45,11 @@ export async function getDB(): Promise<IDBDatabase> {
         });
         trackStore.createIndex('dateAdded', 'dateAdded', { unique: false });
         trackStore.createIndex('lastPlayed', 'lastPlayed', { unique: false });
+      }
+
+      // Audio files store (stores Blobs keyed by track ID)
+      if (!db.objectStoreNames.contains(STORES.audioFiles)) {
+        db.createObjectStore(STORES.audioFiles);
       }
 
       // Dance styles store with indexes

@@ -1,6 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { useAudioSync } from '@/hooks/useAudioSync';
 
 function App() {
+  // Initialize audio sync (bridges stores <-> AudioEngine)
+  useAudioSync();
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center space-y-4">
