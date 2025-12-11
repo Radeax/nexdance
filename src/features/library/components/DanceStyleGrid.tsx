@@ -1,7 +1,5 @@
 import { useLibraryStore } from '@/stores/libraryStore';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { DanceStyleCard } from './DanceStyleCard';
 
 interface DanceStyleGridProps {
   danceStyleIds: string[];
@@ -27,16 +25,6 @@ export function DanceStyleGrid({ danceStyleIds }: DanceStyleGridProps) {
     ).length;
   };
 
-  // Get total tracks for this group
-  const getTotalTrackCount = (): number => {
-    const styleIdSet = new Set(danceStyleIds);
-    return tracks.filter(
-      (t) =>
-        styleIdSet.has(t.primaryDanceStyleId) ||
-        t.alternateDanceStyleIds?.some((id) => styleIdSet.has(id))
-    ).length;
-  };
-
   const handleStyleClick = (styleId: string) => {
     // Toggle: click again to deselect
     if (selectedStyleId === styleId) {
@@ -55,41 +43,17 @@ export function DanceStyleGrid({ danceStyleIds }: DanceStyleGridProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-2 p-4">
-      {/* "All" button to show all tracks in category */}
-      <Button
-        variant={selectedStyleId === null ? 'default' : 'outline'}
-        size="sm"
-        onClick={() => selectDanceStyle(null)}
-        className="gap-2"
-      >
-        All
-        <Badge variant="secondary" className="ml-1">
-          {getTotalTrackCount()}
-        </Badge>
-      </Button>
-
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-4">
       {groupStyles.map(
         (style) =>
           style && (
-            <Button
+            <DanceStyleCard
               key={style.id}
-              variant={selectedStyleId === style.id ? 'default' : 'outline'}
-              size="sm"
+              style={style}
+              trackCount={getTrackCount(style.id)}
+              isSelected={selectedStyleId === style.id}
               onClick={() => handleStyleClick(style.id)}
-              className={cn(
-                'gap-2',
-                selectedStyleId === style.id && 'ring-2 ring-primary ring-offset-2'
-              )}
-            >
-              {style.name}
-              <Badge
-                variant={selectedStyleId === style.id ? 'secondary' : 'outline'}
-                className="ml-1"
-              >
-                {getTrackCount(style.id)}
-              </Badge>
-            </Button>
+            />
           )
       )}
     </div>

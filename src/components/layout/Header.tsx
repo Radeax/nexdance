@@ -1,34 +1,70 @@
 import { Link } from 'react-router';
-import { Settings, ListMusic, Library } from 'lucide-react';
+import { Search, Moon, Sun, ListMusic, User } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useUIStore } from '@/stores/uiStore';
 import { usePlayerStore } from '@/stores/playerStore';
-import { NowPlaying } from '@/features/player/components/NowPlaying';
+import { useLibraryStore } from '@/stores/libraryStore';
+import { useUIStore } from '@/stores/uiStore';
+import { DanceBadge } from '@/components/ui/dance-badge';
+import { useState } from 'react';
 
 export function Header() {
+  const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const getDanceStyleById = useLibraryStore((state) => state.getDanceStyleById);
+  const setSearchQuery = useLibraryStore((state) => state.setSearchQuery);
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const isSidebarOpen = useUIStore((state) => state.isSidebarOpen);
-  const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const [isDark, setIsDark] = useState(false);
+
+  const danceStyle = currentTrack
+    ? getDanceStyleById(currentTrack.primaryDanceStyleId)
+    : null;
+
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+    document.documentElement.classList.toggle('dark');
+  };
 
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-background px-4">
-      {/* Logo / App Name */}
-      <div className="flex items-center gap-4">
-        <Link to="/" className="flex items-center gap-2">
-          <Library className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">NexDance</span>
-        </Link>
+    <header className="flex h-14 items-center justify-between border-b bg-background px-4 gap-4">
+      {/* Logo */}
+      <Link to="/" className="font-bold text-xl text-primary shrink-0">
+        NexDance
+      </Link>
+
+      {/* Search Bar */}
+      <div className="flex-1 max-w-xl">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search songs, styles, BPM... (/ to focus)"
+            className="pl-9 bg-muted/50"
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
-      {/* Now Playing (center) */}
-      <div className="flex-1 px-8">{currentTrack && <NowPlaying />}</div>
+      {/* Now Playing Pill */}
+      {currentTrack && (
+        <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-sm font-medium truncate max-w-32">
+            {currentTrack.title}
+          </span>
+          {danceStyle && (
+            <DanceBadge styleId={currentTrack.primaryDanceStyleId} name={danceStyle.name} />
+          )}
+        </div>
+      )}
 
       {/* Actions */}
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/settings">
-            <Settings className="h-5 w-5" />
-          </Link>
+      <div className="flex items-center gap-1">
+        <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+          {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </Button>
+
+        <Button variant="ghost" size="icon">
+          <User className="h-5 w-5" />
         </Button>
 
         <Button

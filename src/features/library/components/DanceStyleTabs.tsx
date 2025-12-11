@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUIStore } from '@/stores/uiStore';
 import { DanceStyleGrid } from './DanceStyleGrid';
 import { DEFAULT_NAVIGATION_GROUPS } from '@/data/navigationGroups';
+import { cn } from '@/lib/utils';
 
 export function DanceStyleTabs() {
   const activeGroupId = useUIStore((state) => state.activeNavigationGroupId);
@@ -20,24 +20,24 @@ export function DanceStyleTabs() {
   );
 
   return (
-    <div className="border-b">
-      <Tabs
-        value={activeGroupId ?? undefined}
-        onValueChange={setActiveGroup}
-        className="w-full"
-      >
-        <TabsList className="w-full justify-start h-12 rounded-none bg-transparent border-b px-4 gap-1">
-          {DEFAULT_NAVIGATION_GROUPS.map((group) => (
-            <TabsTrigger
-              key={group.id}
-              value={group.id}
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-3 py-1.5"
-            >
-              {group.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+    <div className="border-b bg-background">
+      {/* Category Tabs - Pill Style */}
+      <div className="flex items-center gap-2 px-4 py-3">
+        {DEFAULT_NAVIGATION_GROUPS.map((group) => (
+          <button
+            key={group.id}
+            onClick={() => setActiveGroup(group.id)}
+            className={cn(
+              'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
+              activeGroupId === group.id
+                ? 'bg-blue-500 text-white'
+                : 'bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground'
+            )}
+          >
+            {group.name}
+          </button>
+        ))}
+      </div>
 
       {/* Dance Style Grid for selected category */}
       {activeGroup && <DanceStyleGrid danceStyleIds={activeGroup.danceStyleIds} />}

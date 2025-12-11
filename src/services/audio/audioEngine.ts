@@ -39,6 +39,8 @@ class AudioEngine {
   private currentDuration = 0;
   private currentSpeed = 1.0;
   private currentPitch = 0; // semitones
+  private currentVolume = 1.0;
+  private fadeTime = 0.3; // 300ms fade
 
   // Event listeners
   private listeners: Map<AudioEngineEventType, Set<AudioEngineEventCallback>> =
@@ -202,7 +204,7 @@ class AudioEngine {
   // ==================== Playback Control ====================
 
   async play(): Promise<void> {
-    if (!this.stretchNode || !this.audioContext) return;
+    if (!this.stretchNode || !this.audioContext || !this.gainNode) return;
 
     console.log('AudioEngine.play() called, duration:', this.currentDuration);
 
@@ -214,6 +216,9 @@ class AudioEngine {
 
     console.log('AudioContext state:', this.audioContext.state);
 
+    // Start at zero volume for fade-in
+    this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+
     // Start playback with current parameters using schedule
     this.stretchNode.schedule({
       active: true,
@@ -222,16 +227,33 @@ class AudioEngine {
     });
     console.log('stretchNode.schedule({active: true}) called');
 
+    // Fade in over fadeTime
+    this.gainNode.gain.linearRampToValueAtTime(
+      this.currentVolume,
+      this.audioContext.currentTime + this.fadeTime
+    );
+
     this.isPlaying = true;
     this.startPositionPolling();
     this.emit('play');
   }
 
   async pause(): Promise<void> {
-    if (!this.stretchNode) return;
+    if (!this.stretchNode || !this.gainNode || !this.audioContext) return;
 
-    // Pause playback using schedule
+    // Fade out over fadeTime
+    const currentTime = this.audioContext.currentTime;
+    this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, currentTime);
+    this.gainNode.gain.linearRampToValueAtTime(0, currentTime + this.fadeTime);
+
+    // Wait for fade to complete
+    await new Promise((resolve) => setTimeout(resolve, this.fadeTime * 1000));
+
+    // Actually pause playback
     this.stretchNode.schedule({ active: false });
+
+    // Restore gain value for next play (but don't audibly change - audio is stopped)
+    this.gainNode.gain.setValueAtTime(this.currentVolume, this.audioContext.currentTime);
 
     this.isPlaying = false;
     this.stopPositionPolling();
@@ -251,8 +273,26 @@ class AudioEngine {
   }
 
   async stop(): Promise<void> {
-    await this.pause();
-    await this.seek(0);
+    if (!this.stretchNode || !this.gainNode || !this.audioContext) return;
+
+    // Instant stop - no fade (for Stop button)
+    this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+
+    // Stop playback and reset position
+    this.stretchNode.schedule({
+      active: false,
+      input: 0,
+      output: 0,
+    });
+
+    // Restore gain for next play
+    this.gainNode.gain.setValueAtTime(this.currentVolume, this.audioContext.currentTime);
+
+    this.lastReportedPosition = 0;
+    this.isPlaying = false;
+    this.stopPositionPolling();
+    this.emit('pause');
+    this.emit('timeupdate', { time: 0 });
   }
 
   // ==================== Tempo Control ====================
@@ -280,13 +320,29 @@ class AudioEngine {
   // ==================== Volume Control ====================
 
   setVolume(volume: number): void {
-    if (!this.gainNode) return;
+    if (!this.gainNode || !this.audioContext) return;
 
     const clampedVolume = Math.max(0, Math.min(1, volume));
-    this.gainNode.gain.setValueAtTime(
-      clampedVolume,
-      this.audioContext?.currentTime ?? 0
-    );
+    this.currentVolume = clampedVolume;
+
+    // Only set immediately if currently playing (otherwise fade-in will handle it)
+    if (this.isPlaying) {
+      this.gainNode.gain.setValueAtTime(clampedVolume, this.audioContext.currentTime);
+    }
+  }
+
+  // ==================== Fade Configuration ====================
+
+  setFadeTime(seconds: number): void {
+    this.fadeTime = Math.max(0, Math.min(1, seconds)); // Clamp 0-1s
+  }
+
+  getFadeTime(): number {
+    return this.fadeTime;
+  }
+
+  getIsPlaying(): boolean {
+    return this.isPlaying;
   }
 
   // ==================== Position Tracking ====================

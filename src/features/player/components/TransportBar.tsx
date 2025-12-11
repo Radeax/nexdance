@@ -1,42 +1,38 @@
 import { usePlayerStore } from '@/stores/playerStore';
 import { PlaybackControls } from './PlaybackControls';
-import { ProgressBar } from './ProgressBar';
-import { TempoControl } from './TempoControl';
-import { VolumeControl } from './VolumeControl';
-import { TrackInfo } from './TrackInfo';
+import { ProgressBarWithMarkers } from './ProgressBarWithMarkers';
+import { FadeButtons } from './FadeButtons';
+import { TempoButton } from './TempoButton';
+import { LoopButton } from './LoopButton';
 
 export function TransportBar() {
   const currentTrack = usePlayerStore((state) => state.currentTrack);
 
+  if (!currentTrack) {
+    return (
+      <div className="h-24 border-t bg-background flex items-center justify-center text-muted-foreground">
+        Select a song to start playing
+      </div>
+    );
+  }
+
   return (
-    <div className="h-24 border-t bg-background px-4 py-2">
-      {currentTrack ? (
-        <div className="flex flex-col h-full gap-2">
-          {/* Progress bar (full width) */}
-          <ProgressBar />
+    <div className="border-t bg-background px-4 py-3">
+      {/* Progress Bar (full width) */}
+      <ProgressBarWithMarkers />
 
-          {/* Controls row */}
-          <div className="flex items-center gap-6">
-            {/* Track info (left) */}
-            <TrackInfo />
+      {/* Controls Row */}
+      <div className="flex items-center justify-center gap-4 mt-3">
+        {/* Center: Playback Controls */}
+        <PlaybackControls />
 
-            {/* Playback controls (center) */}
-            <div className="flex-1 flex justify-center">
-              <PlaybackControls />
-            </div>
-
-            {/* Tempo + Volume (right) */}
-            <div className="flex items-center gap-4">
-              <TempoControl />
-              <VolumeControl />
-            </div>
-          </div>
+        {/* Right: Fade buttons, Tempo, Loop */}
+        <div className="flex items-center gap-2 ml-8">
+          <FadeButtons />
+          <TempoButton />
+          <LoopButton />
         </div>
-      ) : (
-        <div className="flex items-center justify-center h-full text-muted-foreground">
-          Select a song to start playing
-        </div>
-      )}
+      </div>
     </div>
   );
 }

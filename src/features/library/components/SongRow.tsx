@@ -1,6 +1,6 @@
 import { Play, Pause, Plus, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { DanceBadge } from '@/components/ui/dance-badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,9 +97,11 @@ export function SongRow({ track }: SongRowProps) {
 
       {/* Dance style badge */}
       {danceStyle && (
-        <Badge variant="outline" className="shrink-0">
-          {danceStyle.name}
-        </Badge>
+        <DanceBadge
+          styleId={track.primaryDanceStyleId}
+          name={danceStyle.name}
+          className="shrink-0"
+        />
       )}
 
       {/* BPM */}

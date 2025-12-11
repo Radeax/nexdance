@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, X, Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { DanceBadge } from '@/components/ui/dance-badge';
 import { useQueueStore } from '@/stores/queueStore';
 import { useLibraryStore } from '@/stores/libraryStore';
 import { usePlayerStore } from '@/stores/playerStore';
@@ -23,6 +24,7 @@ export function QueueItemRow({ item, isNowPlaying }: QueueItemRowProps) {
   const loadTrack = usePlayerStore((state) => state.loadTrack);
   const play = usePlayerStore((state) => state.play);
   const getTrackById = useLibraryStore((state) => state.getTrackById);
+  const getDanceStyleById = useLibraryStore((state) => state.getDanceStyleById);
 
   // Load track data
   useEffect(() => {
@@ -102,7 +104,15 @@ export function QueueItemRow({ item, isNowPlaying }: QueueItemRowProps) {
         >
           {track.title}
         </p>
-        <p className="truncate text-xs text-muted-foreground">{track.artist}</p>
+        <div className="flex items-center gap-2">
+          <p className="truncate text-xs text-muted-foreground">{track.artist}</p>
+          {getDanceStyleById(track.primaryDanceStyleId) && (
+            <DanceBadge
+              styleId={track.primaryDanceStyleId}
+              name={getDanceStyleById(track.primaryDanceStyleId)!.name}
+            />
+          )}
+        </div>
       </div>
 
       {/* Remove button */}
