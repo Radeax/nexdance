@@ -11,7 +11,7 @@ interface DanceStyleCardProps {
 
 export function DanceStyleCard({
   style,
-  trackCount,
+  trackCount: _trackCount,
   isSelected,
   onClick,
 }: DanceStyleCardProps) {
@@ -21,24 +21,19 @@ export function DanceStyleCard({
     <button
       onClick={onClick}
       className={cn(
-        'relative flex flex-col items-start p-3 rounded-lg border bg-white dark:bg-slate-800 text-left transition-all',
-        'hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600',
-        isSelected && 'ring-2 ring-primary ring-offset-2'
+        'relative flex items-center h-14 px-4 rounded-xl border bg-white/70 dark:bg-white/10 backdrop-blur-sm text-left transition-all overflow-hidden',
+        'hover:shadow-lg hover:bg-white dark:hover:bg-white/20 hover:-translate-y-0.5',
+        isSelected && 'ring-2 ring-purple-400 ring-offset-2'
       )}
     >
-      {/* Colored left border */}
+      {/* Colored left border stripe */}
       <div
-        className="absolute left-0 top-2 bottom-2 w-1 rounded-full"
+        className="absolute left-2 top-2.5 bottom-2.5 w-[5px] rounded-full"
         style={{ backgroundColor: color }}
       />
 
       {/* Content */}
-      <div className="pl-3">
-        <span className="font-medium text-sm">{style.name}</span>
-        <span className="block text-xs text-muted-foreground mt-0.5">
-          {trackCount} {trackCount === 1 ? 'song' : 'songs'}
-        </span>
-      </div>
+      <span className="font-semibold text-sm pl-4">{style.name}</span>
     </button>
   );
 }

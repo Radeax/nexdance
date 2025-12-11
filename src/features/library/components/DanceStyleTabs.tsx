@@ -28,11 +28,15 @@ export function DanceStyleTabs() {
             key={group.id}
             onClick={() => setActiveGroup(group.id)}
             className={cn(
-              'px-4 py-2 rounded-full text-sm font-medium transition-all',
+              'px-4 py-1.5 rounded-[10px] text-sm font-medium transition-all',
               activeGroupId === group.id
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'bg-white/80 text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-white/10 dark:text-gray-300 dark:border-gray-600'
+                ? 'text-white shadow-md border-transparent'
+                : 'bg-white/60 text-gray-500 border border-gray-200 hover:bg-white/90 dark:bg-white/10 dark:text-gray-300 dark:border-gray-600'
             )}
+            style={activeGroupId === group.id ? {
+              background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)',
+              boxShadow: '0 2px 8px rgba(124, 58, 237, 0.3)'
+            } : undefined}
           >
             {group.name}
           </button>

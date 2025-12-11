@@ -34,22 +34,30 @@ export function FadeButtons() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Fade to Next (orange gradient) */}
+      {/* Fade to Next */}
       <Button
         onClick={handleFadeToNext}
-        className="px-4 py-2 rounded-lg text-white font-medium shadow-md text-sm"
-        style={{ background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)' }}
-        title="Fade to next track"
+        className="h-10 px-[18px] rounded-full text-white font-semibold text-[13px] border-none"
+        style={{
+          background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)',
+          boxShadow: '0 2px 8px rgba(251, 146, 60, 0.3)',
+        }}
+        title="Fade then Next"
+        aria-label="Fade then Next"
       >
-        Fade → ⏭
+        Fade → ⏭︎
       </Button>
 
-      {/* Fade to Pause (pink gradient) */}
+      {/* Fade to Pause */}
       <Button
         onClick={handleFadeToPause}
-        className="px-4 py-2 rounded-lg text-white font-medium shadow-md text-sm"
-        style={{ background: 'linear-gradient(135deg, #f472b6 0%, #fb7185 100%)' }}
-        title="Fade to pause"
+        className="h-10 px-[18px] rounded-full text-white font-semibold text-[13px] border-none"
+        style={{
+          background: 'linear-gradient(135deg, #f472b6 0%, #fb7185 100%)',
+          boxShadow: '0 2px 8px rgba(244, 114, 182, 0.3)',
+        }}
+        title="Fade then Pause"
+        aria-label="Fade then Pause"
       >
         Fade → ⏸
       </Button>

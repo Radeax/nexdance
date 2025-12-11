@@ -29,15 +29,24 @@ export function QueueHeader({ itemCount }: QueueHeaderProps) {
   };
 
   return (
-    <div className="border-b p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="font-semibold">Play Queue</h2>
-        <span className="text-sm text-muted-foreground">
-          {itemCount} {itemCount === 1 ? 'song' : 'songs'}
-        </span>
+    <div className="border-b">
+      {/* Header with purple gradient */}
+      <div
+        className="p-4 text-white"
+        style={{
+          background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)',
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-lg">Play Queue</h2>
+          <span className="text-sm bg-white/20 px-2 py-0.5 rounded-full">
+            {itemCount} {itemCount === 1 ? 'song' : 'songs'}
+          </span>
+        </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      {/* Controls row */}
+      <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-white/5">
         {/* Autoplay toggle */}
         <div className="flex items-center gap-2">
           <Switch
@@ -45,7 +54,7 @@ export function QueueHeader({ itemCount }: QueueHeaderProps) {
             checked={isAutoplayEnabled}
             onCheckedChange={setAutoplay}
           />
-          <Label htmlFor="autoplay" className="text-sm">
+          <Label htmlFor="autoplay" className="text-sm font-medium">
             Autoplay
           </Label>
         </div>
@@ -56,9 +65,10 @@ export function QueueHeader({ itemCount }: QueueHeaderProps) {
           size="sm"
           onClick={handleClearClick}
           disabled={itemCount === 0}
+          className="text-sm"
         >
           <Trash2 className="h-4 w-4 mr-1" />
-          {confirmClear ? 'Tap to confirm' : 'Clear'}
+          {confirmClear ? 'Confirm' : 'Clear'}
         </Button>
       </div>
     </div>

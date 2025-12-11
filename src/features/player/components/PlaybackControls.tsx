@@ -1,7 +1,6 @@
-import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import { Play, Pause, Rewind, FastForward, SkipBack, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlayerStore } from '@/stores/playerStore';
-import { useQueueStore } from '@/stores/queueStore';
 import { getAudioEngine } from '@/services/audio/audioEngine';
 
 export function PlaybackControls() {
@@ -9,13 +8,6 @@ export function PlaybackControls() {
   const isLoading = usePlayerStore((state) => state.isLoading);
   const play = usePlayerStore((state) => state.play);
   const pause = usePlayerStore((state) => state.pause);
-  const loadTrack = usePlayerStore((state) => state.loadTrack);
-
-  const goToPrevious = useQueueStore((state) => state.goToPrevious);
-  const advanceQueue = useQueueStore((state) => state.advanceQueue);
-  const getCurrentTrack = useQueueStore((state) => state.getCurrentTrack);
-  const currentIndex = useQueueStore((state) => state.currentIndex);
-  const items = useQueueStore((state) => state.items);
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -25,26 +17,16 @@ export function PlaybackControls() {
     }
   };
 
-  const handlePrevious = async () => {
-    const hasPrev = goToPrevious();
-    if (hasPrev) {
-      const track = await getCurrentTrack();
-      if (track) {
-        loadTrack(track);
-        play();
-      }
-    }
+  const handleSeekToStart = async () => {
+    const audioEngine = getAudioEngine();
+    await audioEngine.seek(0);
   };
 
-  const handleNext = async () => {
-    const hasNext = advanceQueue();
-    if (hasNext) {
-      const track = await getCurrentTrack();
-      if (track) {
-        loadTrack(track);
-        play();
-      }
-    }
+  const handleSeekToEnd = async () => {
+    const audioEngine = getAudioEngine();
+    const state = audioEngine.getState();
+    // Seek to near end (will trigger track end)
+    await audioEngine.seek(Math.max(0, state.duration - 0.5));
   };
 
   const handleSeekRelative = async (seconds: number) => {
@@ -54,19 +36,17 @@ export function PlaybackControls() {
     await audioEngine.seek(newTime);
   };
 
-  const hasPrevious = currentIndex > 0;
-  const hasNext = currentIndex < items.length - 1;
-
   return (
     <div className="flex items-center gap-2">
-      {/* Previous Track */}
+      {/* Go to Start of Song */}
       <Button
         variant="ghost"
         size="icon"
-        onClick={handlePrevious}
-        disabled={!hasPrevious}
+        onClick={handleSeekToStart}
+        className="w-12 h-12 rounded-xl bg-white/50 border border-gray-200 hover:bg-white/80 dark:bg-white/10 dark:border-gray-600"
+        title="Go to start of song"
       >
-        <SkipBack className="h-5 w-5" />
+        <SkipBack className="h-5 w-5 text-gray-500" />
       </Button>
 
       {/* -5s Button */}
@@ -74,25 +54,29 @@ export function PlaybackControls() {
         variant="ghost"
         size="icon"
         onClick={() => handleSeekRelative(-5)}
-        className="relative w-12 h-12 rounded-full bg-white/80 border border-gray-200 hover:bg-gray-50 dark:bg-white/10 dark:border-gray-600"
+        className="relative flex flex-col items-center justify-center w-[52px] h-[52px] rounded-xl bg-white/50 border border-gray-200 hover:bg-white/80 dark:bg-white/10 dark:border-gray-600"
+        title="Seek back 5 seconds"
       >
-        <span className="text-lg">⏪</span>
-        <span className="absolute -bottom-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">-5s</span>
+        <Rewind className="h-5 w-5 text-gray-500" />
+        <span className="text-[11px] font-medium text-gray-500 mt-0.5">-5s</span>
       </Button>
 
       {/* Play/Pause (large, gradient) */}
       <Button
         onClick={handlePlayPause}
         disabled={isLoading}
-        className="h-14 w-14 rounded-full text-white shadow-lg hover:shadow-xl transition-all"
-        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)' }}
+        className="h-[60px] w-[60px] rounded-full text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
+        style={{
+          background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%)',
+          boxShadow: '0 0 24px rgba(129, 140, 248, 0.4)'
+        }}
       >
         {isLoading ? (
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent" />
         ) : isPlaying ? (
-          <Pause className="h-6 w-6" />
+          <Pause className="h-6 w-6" fill="currentColor" />
         ) : (
-          <Play className="h-6 w-6 ml-1" />
+          <Play className="h-6 w-6 ml-1" fill="currentColor" />
         )}
       </Button>
 
@@ -101,20 +85,22 @@ export function PlaybackControls() {
         variant="ghost"
         size="icon"
         onClick={() => handleSeekRelative(5)}
-        className="relative w-12 h-12 rounded-full bg-white/80 border border-gray-200 hover:bg-gray-50 dark:bg-white/10 dark:border-gray-600"
+        className="relative flex flex-col items-center justify-center w-[52px] h-[52px] rounded-xl bg-white/50 border border-gray-200 hover:bg-white/80 dark:bg-white/10 dark:border-gray-600"
+        title="Seek forward 5 seconds"
       >
-        <span className="text-lg">⏩</span>
-        <span className="absolute -bottom-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">+5s</span>
+        <FastForward className="h-5 w-5 text-gray-500" />
+        <span className="text-[11px] font-medium text-gray-500 mt-0.5">+5s</span>
       </Button>
 
-      {/* Next Track */}
+      {/* Go to End of Song */}
       <Button
         variant="ghost"
         size="icon"
-        onClick={handleNext}
-        disabled={!hasNext}
+        onClick={handleSeekToEnd}
+        className="w-12 h-12 rounded-xl bg-white/50 border border-gray-200 hover:bg-white/80 dark:bg-white/10 dark:border-gray-600"
+        title="Go to end of song"
       >
-        <SkipForward className="h-5 w-5" />
+        <SkipForward className="h-5 w-5 text-gray-500" />
       </Button>
     </div>
   );
