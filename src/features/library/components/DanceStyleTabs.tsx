@@ -20,7 +20,7 @@ export function DanceStyleTabs() {
   );
 
   return (
-    <div className="border-b bg-background">
+    <div className="border-b" style={{ background: 'var(--color-bg-panel)', backdropFilter: 'blur(8px)' }}>
       {/* Category Tabs - Pill Style */}
       <div className="flex items-center gap-2 px-4 py-3">
         {DEFAULT_NAVIGATION_GROUPS.map((group) => (
@@ -28,10 +28,10 @@ export function DanceStyleTabs() {
             key={group.id}
             onClick={() => setActiveGroup(group.id)}
             className={cn(
-              'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
+              'px-4 py-2 rounded-full text-sm font-medium transition-all',
               activeGroupId === group.id
-                ? 'bg-blue-500 text-white'
-                : 'bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground'
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-white/80 text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-white/10 dark:text-gray-300 dark:border-gray-600'
             )}
           >
             {group.name}

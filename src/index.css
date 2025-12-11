@@ -44,6 +44,28 @@
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
+
+  /* App Background Gradient */
+  --color-bg-app: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 50%, #e3f2fd 100%);
+  --color-bg-panel: rgba(255, 255, 255, 0.85);
+
+  /* Navigation Icon Colors */
+  --color-nav-dance: #fbbf24;
+  --color-nav-library: #60a5fa;
+  --color-nav-playlists: #a78bfa;
+  --color-nav-settings: #2dd4bf;
+
+  /* Progress Bar */
+  --color-playback-gradient: linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%);
+
+  /* Transport Buttons */
+  --color-fade-next: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  --color-fade-pause: linear-gradient(135deg, #f472b6 0%, #fb7185 100%);
+  --color-tempo-normal: #fb923c;
+  --color-tempo-modified: #ef4444;
+
+  /* Shadows */
+  --shadow-elevation: 0 8px 32px rgba(99, 102, 241, 0.12);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -77,6 +99,8 @@
 }
 
 .dark {
+  --color-bg-app: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a5f 100%);
+  --color-bg-panel: rgba(30, 27, 75, 0.85);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

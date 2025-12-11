@@ -1,4 +1,3 @@
-import { SkipForward, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQueueStore } from '@/stores/queueStore';
 import { usePlayerStore } from '@/stores/playerStore';
@@ -34,26 +33,25 @@ export function FadeButtons() {
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
+      {/* Fade to Next (orange gradient) */}
       <Button
-        variant="outline"
-        size="sm"
         onClick={handleFadeToNext}
-        className="text-xs gap-1"
+        className="px-4 py-2 rounded-lg text-white font-medium shadow-md text-sm"
+        style={{ background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)' }}
         title="Fade to next track"
       >
-        Fade
-        <SkipForward className="h-3 w-3" />
+        Fade → ⏭
       </Button>
+
+      {/* Fade to Pause (pink gradient) */}
       <Button
-        variant="outline"
-        size="sm"
         onClick={handleFadeToPause}
-        className="text-xs gap-1"
+        className="px-4 py-2 rounded-lg text-white font-medium shadow-md text-sm"
+        style={{ background: 'linear-gradient(135deg, #f472b6 0%, #fb7185 100%)' }}
         title="Fade to pause"
       >
-        Fade
-        <Pause className="h-3 w-3" />
+        Fade → ⏸
       </Button>
     </div>
   );

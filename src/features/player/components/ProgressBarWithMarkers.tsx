@@ -34,17 +34,23 @@ export function ProgressBarWithMarkers() {
 
       {/* Progress bar */}
       <div
-        className="flex-1 h-2 bg-muted rounded-full cursor-pointer relative overflow-hidden"
+        className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer relative"
         onClick={handleSeek}
       >
-        {/* Progress fill with gradient */}
+        {/* Progress fill with blue→purple gradient */}
         <div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all"
-          style={{ width: `${progress}%` }}
+          className="absolute h-full rounded-full"
+          style={{
+            width: `${progress}%`,
+            background: 'linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%)'
+          }}
         />
 
-        {/* Hover effect */}
-        <div className="absolute inset-0 hover:bg-white/10 transition-colors" />
+        {/* Playhead (white circle with shadow) */}
+        <div
+          className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg border-2 border-purple-400"
+          style={{ left: `calc(${progress}% - 8px)` }}
+        />
       </div>
 
       {/* Duration */}

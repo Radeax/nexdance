@@ -10,14 +10,20 @@ export function TransportBar() {
 
   if (!currentTrack) {
     return (
-      <div className="h-24 border-t bg-background flex items-center justify-center text-muted-foreground">
+      <div
+        className="h-24 border-t flex items-center justify-center text-muted-foreground backdrop-blur-sm"
+        style={{ background: 'var(--color-bg-panel)' }}
+      >
         Select a song to start playing
       </div>
     );
   }
 
   return (
-    <div className="border-t bg-background px-4 py-3">
+    <div
+      className="border-t px-4 py-3 backdrop-blur-sm"
+      style={{ background: 'var(--color-bg-panel)' }}
+    >
       {/* Progress Bar (full width) */}
       <ProgressBarWithMarkers />
 

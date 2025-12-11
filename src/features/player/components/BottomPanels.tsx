@@ -10,7 +10,10 @@ export function BottomPanels() {
   if (!currentTrack) return null;
 
   return (
-    <div className="border-t bg-slate-50 dark:bg-slate-900">
+    <div
+      className="border-t backdrop-blur-sm"
+      style={{ background: 'var(--color-bg-panel)' }}
+    >
       <div className="grid grid-cols-3 gap-4 p-4">
         <StartPanel />
         <EndPanel />

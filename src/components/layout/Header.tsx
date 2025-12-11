@@ -26,7 +26,10 @@ export function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-background px-4 gap-4">
+    <header
+      className="flex h-14 items-center justify-between border-b px-4 gap-4 backdrop-blur-sm"
+      style={{ background: 'var(--color-bg-panel)' }}
+    >
       {/* Logo */}
       <Link to="/" className="font-bold text-xl text-primary shrink-0">
         NexDance

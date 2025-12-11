@@ -75,9 +75,10 @@ export function QueueItemRow({ item, isNowPlaying }: QueueItemRowProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'flex items-center gap-2 px-2 py-2 hover:bg-muted/50 transition-colors cursor-pointer group',
-        isNowPlaying && 'bg-primary/10',
-        isDragging && 'opacity-50 bg-muted'
+        'flex items-center gap-2 px-3 py-2 mx-2 my-1 rounded-lg transition-all cursor-pointer group',
+        'bg-white/90 dark:bg-white/10 backdrop-blur-sm shadow-sm border border-gray-100 dark:border-gray-700',
+        isNowPlaying && 'ring-2 ring-purple-400 ring-offset-2 dark:ring-offset-gray-900',
+        isDragging && 'opacity-50 shadow-lg'
       )}
       onClick={handleClick}
     >

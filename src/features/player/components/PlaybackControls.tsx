@@ -1,4 +1,4 @@
-import { Play, Pause, SkipBack, SkipForward, Square } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useQueueStore } from '@/stores/queueStore';
@@ -47,10 +47,11 @@ export function PlaybackControls() {
     }
   };
 
-  const handleStop = async () => {
+  const handleSeekRelative = async (seconds: number) => {
     const audioEngine = getAudioEngine();
-    await audioEngine.stop();
-    pause();
+    const state = audioEngine.getState();
+    const newTime = Math.max(0, Math.min(state.duration, state.currentTime + seconds));
+    await audioEngine.seek(newTime);
   };
 
   const hasPrevious = currentIndex > 0;
@@ -58,7 +59,7 @@ export function PlaybackControls() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Previous */}
+      {/* Previous Track */}
       <Button
         variant="ghost"
         size="icon"
@@ -68,29 +69,45 @@ export function PlaybackControls() {
         <SkipBack className="h-5 w-5" />
       </Button>
 
-      {/* Play/Pause */}
+      {/* -5s Button */}
       <Button
-        variant="default"
+        variant="ghost"
         size="icon"
-        className="h-10 w-10"
+        onClick={() => handleSeekRelative(-5)}
+        className="relative w-12 h-12 rounded-full bg-white/80 border border-gray-200 hover:bg-gray-50 dark:bg-white/10 dark:border-gray-600"
+      >
+        <span className="text-lg">⏪</span>
+        <span className="absolute -bottom-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">-5s</span>
+      </Button>
+
+      {/* Play/Pause (large, gradient) */}
+      <Button
         onClick={handlePlayPause}
         disabled={isLoading}
+        className="h-14 w-14 rounded-full text-white shadow-lg hover:shadow-xl transition-all"
+        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)' }}
       >
         {isLoading ? (
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
         ) : isPlaying ? (
-          <Pause className="h-5 w-5" />
+          <Pause className="h-6 w-6" />
         ) : (
-          <Play className="h-5 w-5" />
+          <Play className="h-6 w-6 ml-1" />
         )}
       </Button>
 
-      {/* Stop */}
-      <Button variant="ghost" size="icon" onClick={handleStop}>
-        <Square className="h-4 w-4" />
+      {/* +5s Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => handleSeekRelative(5)}
+        className="relative w-12 h-12 rounded-full bg-white/80 border border-gray-200 hover:bg-gray-50 dark:bg-white/10 dark:border-gray-600"
+      >
+        <span className="text-lg">⏩</span>
+        <span className="absolute -bottom-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">+5s</span>
       </Button>
 
-      {/* Next */}
+      {/* Next Track */}
       <Button
         variant="ghost"
         size="icon"

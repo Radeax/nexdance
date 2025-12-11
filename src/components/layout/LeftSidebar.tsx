@@ -3,15 +3,18 @@ import { Disc3, Library, ListMusic, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { to: '/dance', icon: Disc3, label: 'Dance', color: 'text-orange-500' },
-  { to: '/library', icon: Library, label: 'Library', color: 'text-blue-500' },
-  { to: '/playlists', icon: ListMusic, label: 'Playlists', color: 'text-purple-500' },
-  { to: '/settings', icon: Settings, label: 'Settings', color: 'text-slate-500' },
+  { to: '/dance', icon: Disc3, label: 'Dance', color: 'text-amber-500' },
+  { to: '/library', icon: Library, label: 'Library', color: 'text-blue-400' },
+  { to: '/playlists', icon: ListMusic, label: 'Playlists', color: 'text-purple-400' },
+  { to: '/settings', icon: Settings, label: 'Settings', color: 'text-teal-400' },
 ];
 
 export function LeftSidebar() {
   return (
-    <aside className="w-44 border-r bg-muted/30 p-3 flex flex-col gap-1">
+    <aside
+      className="w-44 border-r p-3 flex flex-col gap-1 backdrop-blur-sm"
+      style={{ background: 'var(--color-bg-panel)' }}
+    >
       {navItems.map((item) => (
         <NavLink
           key={item.to}
