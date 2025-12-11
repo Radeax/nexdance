@@ -108,8 +108,11 @@ export function useAudioSync(): void {
           return;
         }
 
-        // Avoid reloading the same track
-        if (track.id === currentTrackId.current) return;
+        // Avoid reloading the same track - just clear loading state and resume
+        if (track.id === currentTrackId.current) {
+          usePlayerStore.getState().setIsLoading(false);
+          return;
+        }
         currentTrackId.current = track.id;
 
         console.log('Loading track:', track.title);
@@ -141,6 +144,9 @@ export function useAudioSync(): void {
     return () => unsubTrack();
   }, []);
 
+  // Track pending play request when loading
+  const pendingPlay = useRef(false);
+
   // Subscribe to play/pause changes in PlayerStore and forward to AudioEngine
   useEffect(() => {
     const audioEngine = getAudioEngine();
@@ -149,18 +155,38 @@ export function useAudioSync(): void {
     const unsubPlayState = usePlayerStore.subscribe(
       (state) => state.isPlaying,
       async (isPlaying) => {
-        // Only act if state actually changed and track is loaded
-        if (isPlaying === wasPlaying) return;
+        console.log('Play state changed:', isPlaying, 'wasPlaying:', wasPlaying);
+
+        // Only act if state actually changed
+        if (isPlaying === wasPlaying) {
+          console.log('Skipping - same state');
+          return;
+        }
         wasPlaying = isPlaying;
 
         const { currentTrack, isLoading } = usePlayerStore.getState();
-        if (!currentTrack || isLoading) return;
+        console.log('Track:', currentTrack?.title, 'isLoading:', isLoading);
+
+        if (!currentTrack) {
+          console.log('Skipping - no track');
+          return;
+        }
+
+        // If still loading, mark as pending play
+        if (isLoading && isPlaying) {
+          console.log('Track still loading, marking pending play');
+          pendingPlay.current = true;
+          return;
+        }
 
         try {
           if (isPlaying) {
+            console.log('Calling audioEngine.play()');
             await audioEngine.play();
           } else {
+            console.log('Calling audioEngine.pause()');
             await audioEngine.pause();
+            pendingPlay.current = false; // Cancel pending play on pause
           }
         } catch (error) {
           console.error('Playback control error:', error);
@@ -169,6 +195,29 @@ export function useAudioSync(): void {
     );
 
     return () => unsubPlayState();
+  }, []);
+
+  // Watch for loading to complete and trigger pending play
+  useEffect(() => {
+    const audioEngine = getAudioEngine();
+
+    const unsubLoading = usePlayerStore.subscribe(
+      (state) => state.isLoading,
+      async (isLoading) => {
+        // When loading finishes and we have a pending play
+        if (!isLoading && pendingPlay.current) {
+          console.log('Loading finished, executing pending play');
+          pendingPlay.current = false;
+          try {
+            await audioEngine.play();
+          } catch (error) {
+            console.error('Pending play error:', error);
+          }
+        }
+      }
+    );
+
+    return () => unsubLoading();
   }, []);
 
   // Subscribe to seek requests in PlayerStore

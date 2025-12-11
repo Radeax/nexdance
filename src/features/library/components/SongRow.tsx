@@ -1,4 +1,4 @@
-import { Play, Plus, MoreHorizontal } from 'lucide-react';
+import { Play, Pause, Plus, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -22,7 +22,9 @@ export function SongRow({ track }: SongRowProps) {
   const addToQueue = useQueueStore((state) => state.addToQueue);
   const loadTrack = usePlayerStore((state) => state.loadTrack);
   const play = usePlayerStore((state) => state.play);
+  const pause = usePlayerStore((state) => state.pause);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
+  const isPlaying = usePlayerStore((state) => state.isPlaying);
   const getDanceStyleById = useLibraryStore((state) => state.getDanceStyleById);
   const showToast = useUIStore((state) => state.showToast);
 
@@ -41,6 +43,15 @@ export function SongRow({ track }: SongRowProps) {
   };
 
   const handlePlayNow = () => {
+    // If it's the same track, toggle play/pause
+    if (currentTrack?.id === track.id) {
+      if (isPlaying) {
+        pause();
+      } else {
+        play();
+      }
+      return;
+    }
     loadTrack(track);
     play();
   };
@@ -53,7 +64,7 @@ export function SongRow({ track }: SongRowProps) {
       )}
       onClick={handleClick}
     >
-      {/* Play button (shown on hover) */}
+      {/* Play/Pause button (shown on hover) */}
       <Button
         variant="ghost"
         size="icon"
@@ -63,7 +74,11 @@ export function SongRow({ track }: SongRowProps) {
           handlePlayNow();
         }}
       >
-        <Play className="h-4 w-4" />
+        {isCurrentTrack && isPlaying ? (
+          <Pause className="h-4 w-4" />
+        ) : (
+          <Play className="h-4 w-4" />
+        )}
       </Button>
 
       {/* Track info */}
@@ -110,8 +125,12 @@ export function SongRow({ track }: SongRowProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={handlePlayNow}>
-            <Play className="h-4 w-4 mr-2" />
-            Play Now
+            {isCurrentTrack && isPlaying ? (
+              <Pause className="h-4 w-4 mr-2" />
+            ) : (
+              <Play className="h-4 w-4 mr-2" />
+            )}
+            {isCurrentTrack && isPlaying ? 'Pause' : 'Play Now'}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleClick}>
             <Plus className="h-4 w-4 mr-2" />

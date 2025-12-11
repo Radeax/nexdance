@@ -1,3 +1,7 @@
+// Polyfill Buffer for music-metadata-browser
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { initializeDB } from '@/services/storage';
