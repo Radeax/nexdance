@@ -17,6 +17,7 @@ export interface QueueActions {
   addToQueue: (trackId: string) => void;
   addMultipleToQueue: (trackIds: string[]) => void;
   removeFromQueue: (queueItemId: string) => void;
+  removeFromQueueByTrackId: (trackId: string) => void;
   clearQueue: () => void;
   reorderQueue: (fromIndex: number, toIndex: number) => void;
 
@@ -106,6 +107,13 @@ export const useQueueStore = create<QueueState & QueueActions>()(
         return { items: newItems, currentIndex: newIndex };
       });
 
+      get().persistQueue();
+    },
+
+    removeFromQueueByTrackId: (trackId) => {
+      set((state) => ({
+        items: state.items.filter((item) => item.trackId !== trackId),
+      }));
       get().persistQueue();
     },
 

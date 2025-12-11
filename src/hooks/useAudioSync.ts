@@ -130,6 +130,15 @@ export function useAudioSync(): void {
           if (track.startTime && track.startTime > 0) {
             await audioEngine.seek(track.startTime);
           }
+
+          console.log('Track loaded successfully');
+
+          // After loading completes, auto-play if isPlaying is true
+          const { isPlaying } = usePlayerStore.getState();
+          if (isPlaying) {
+            console.log('Track loaded, auto-playing because isPlaying is true');
+            await audioEngine.play();
+          }
         } catch (error) {
           console.error('Failed to load track audio:', error);
           usePlayerStore

@@ -1,4 +1,4 @@
-import { Play, Pause, Plus, MoreHorizontal } from 'lucide-react';
+import { Play, Pause, Plus, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -27,6 +27,7 @@ export function SongRow({ track }: SongRowProps) {
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const getDanceStyleById = useLibraryStore((state) => state.getDanceStyleById);
   const showToast = useUIStore((state) => state.showToast);
+  const openModal = useUIStore((state) => state.openModal);
 
   const danceStyle = getDanceStyleById(track.primaryDanceStyleId);
   const isCurrentTrack = currentTrack?.id === track.id;
@@ -135,6 +136,16 @@ export function SongRow({ track }: SongRowProps) {
           <DropdownMenuItem onClick={handleClick}>
             <Plus className="h-4 w-4 mr-2" />
             Add to Queue
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onClick={(e) => {
+              e.stopPropagation();
+              openModal('deleteConfirm', { trackId: track.id, trackTitle: track.title });
+            }}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
