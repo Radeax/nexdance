@@ -29,24 +29,24 @@ export function QueueHeader({ itemCount }: QueueHeaderProps) {
   };
 
   return (
-    <div className="border-b">
-      {/* Header with purple gradient */}
+    <div>
+      {/* Header with green gradient */}
       <div
-        className="p-4 text-white"
+        className="px-4 py-3 text-white"
         style={{
-          background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)',
+          background: 'var(--color-tab-active)',
         }}
       >
         <div className="flex items-center justify-between">
-          <h2 className="font-bold text-lg">Play Queue</h2>
-          <span className="text-sm bg-white/20 px-2 py-0.5 rounded-full">
+          <h2 className="font-bold text-base">Play Queue</h2>
+          <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full font-medium">
             {itemCount} {itemCount === 1 ? 'song' : 'songs'}
           </span>
         </div>
       </div>
 
       {/* Controls row */}
-      <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-white/5">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border/30">
         {/* Autoplay toggle */}
         <div className="flex items-center gap-2">
           <Switch

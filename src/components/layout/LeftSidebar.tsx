@@ -12,8 +12,12 @@ const navItems = [
 export function LeftSidebar() {
   return (
     <aside
-      className="w-44 border-r p-3 flex flex-col gap-1 backdrop-blur-sm"
-      style={{ background: 'var(--color-bg-panel)' }}
+      className="w-48 p-3 flex flex-col gap-1 rounded-[var(--panel-radius)]"
+      style={{
+        background: 'var(--color-bg-panel)',
+        backdropFilter: 'blur(var(--panel-blur))',
+        boxShadow: 'var(--shadow-panel)',
+      }}
     >
       {navItems.map((item) => (
         <NavLink

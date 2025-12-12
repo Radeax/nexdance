@@ -15,36 +15,51 @@ export function MainLayout() {
       className="flex h-screen flex-col"
       style={{ background: 'var(--color-bg-app)', backgroundAttachment: 'fixed' }}
     >
-      {/* Header */}
+      {/* Header - full width */}
       <Header />
 
       {/* Main Content Area */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 gap-3 overflow-hidden min-h-0 px-3 pt-3">
         {/* Left Navigation Sidebar */}
         <LeftSidebar />
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto">
+        <main
+          className="flex-1 overflow-auto rounded-[var(--panel-radius)]"
+          style={{
+            background: 'var(--color-bg-panel)',
+            backdropFilter: 'blur(var(--panel-blur))',
+            boxShadow: 'var(--shadow-panel)',
+          }}
+        >
           <Outlet />
         </main>
 
-        {/* Queue Sidebar (Right) */}
+        {/* Queue Sidebar (Right) - 280px per spec */}
         <aside
           className={cn(
-            'w-80 border-l transition-all duration-200 flex flex-col backdrop-blur-sm',
-            isSidebarOpen ? 'translate-x-0' : 'translate-x-full w-0 border-0'
+            'transition-all duration-300 flex flex-col rounded-[var(--panel-radius)] overflow-hidden',
+            isSidebarOpen ? 'w-[280px] opacity-100' : 'w-0 opacity-0'
           )}
-          style={{ background: isSidebarOpen ? 'var(--color-bg-panel)' : 'transparent' }}
+          style={{
+            background: isSidebarOpen ? 'var(--color-bg-panel)' : 'transparent',
+            backdropFilter: isSidebarOpen ? 'blur(var(--panel-blur))' : 'none',
+            boxShadow: isSidebarOpen ? 'var(--shadow-panel)' : 'none',
+          }}
         >
           {isSidebarOpen && <QueueSidebar />}
         </aside>
       </div>
 
       {/* Transport Bar */}
-      <TransportBar />
+      <div className="px-3 pt-3">
+        <TransportBar />
+      </div>
 
       {/* Bottom Panels (Start/End/Playback) */}
-      <BottomPanels />
+      <div className="px-3 pt-3 pb-3">
+        <BottomPanels />
+      </div>
     </div>
   );
 }

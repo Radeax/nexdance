@@ -75,10 +75,12 @@ export function QueueItemRow({ item, isNowPlaying }: QueueItemRowProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'flex items-center gap-2 px-3 py-2 mx-2 my-1 rounded-lg transition-all cursor-pointer group',
-        'bg-white/90 dark:bg-white/10 backdrop-blur-sm shadow-sm border border-gray-100 dark:border-gray-700',
-        isNowPlaying && 'ring-2 ring-purple-400 ring-offset-2 dark:ring-offset-gray-900',
-        isDragging && 'opacity-50 shadow-lg'
+        'flex items-center gap-2 px-2 py-2 rounded-md transition-all cursor-pointer group',
+        'bg-white/60 dark:bg-white/5 border',
+        isNowPlaying
+          ? 'bg-primary/5 dark:bg-primary/10 border-dashed border-primary/40'
+          : 'border-transparent hover:bg-white/80 dark:hover:bg-white/10',
+        isDragging && 'opacity-50 shadow-lg scale-[1.02]'
       )}
       onClick={handleClick}
     >
@@ -97,17 +99,16 @@ export function QueueItemRow({ item, isNowPlaying }: QueueItemRowProps) {
       {isNowPlaying && <Play className="h-3 w-3 text-primary animate-pulse" />}
 
       {/* Track info */}
-      <div className="flex-1 min-w-0">
-        <p
-          className={cn(
-            'truncate text-sm font-medium',
-            isNowPlaying && 'text-primary'
-          )}
-        >
-          {track.title}
-        </p>
+      <div className="flex-1 min-w-0 overflow-hidden">
         <div className="flex items-center gap-2">
-          <p className="truncate text-xs text-muted-foreground">{track.artist}</p>
+          <p
+            className={cn(
+              'truncate text-sm font-medium flex-1',
+              isNowPlaying && 'text-primary'
+            )}
+          >
+            {track.title}
+          </p>
           {getDanceStyleById(track.primaryDanceStyleId) && (
             <DanceBadge
               styleId={track.primaryDanceStyleId}
@@ -115,13 +116,19 @@ export function QueueItemRow({ item, isNowPlaying }: QueueItemRowProps) {
             />
           )}
         </div>
+        <p className="truncate text-xs text-muted-foreground">{track.artist}</p>
       </div>
+
+      {/* Duration */}
+      <span className="text-xs text-muted-foreground shrink-0 tabular-nums">
+        {Math.floor(track.duration / 60)}:{String(Math.floor(track.duration % 60)).padStart(2, '0')}
+      </span>
 
       {/* Remove button */}
       <Button
         variant="ghost"
         size="icon"
-        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="h-5 w-5 shrink-0 text-muted-foreground hover:text-foreground"
         onClick={handleRemove}
       >
         <X className="h-3 w-3" />

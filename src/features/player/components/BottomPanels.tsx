@@ -10,15 +10,10 @@ export function BottomPanels() {
   if (!currentTrack) return null;
 
   return (
-    <div
-      className="border-t backdrop-blur-sm"
-      style={{ background: 'var(--color-bg-panel)' }}
-    >
-      <div className="grid grid-cols-3 gap-4 p-4">
-        <StartPanel />
-        <EndPanel />
-        <PlaybackPanel />
-      </div>
+    <div className="grid grid-cols-3 gap-3">
+      <StartPanel />
+      <EndPanel />
+      <PlaybackPanel />
     </div>
   );
 }

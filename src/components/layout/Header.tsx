@@ -27,8 +27,11 @@ export function Header() {
 
   return (
     <header
-      className="flex h-14 items-center justify-between border-b px-4 gap-4 backdrop-blur-sm"
-      style={{ background: 'var(--color-bg-panel)' }}
+      className="flex h-14 items-center justify-between px-4 gap-4"
+      style={{
+        background: 'var(--color-bg-panel)',
+        backdropFilter: 'blur(var(--panel-blur))',
+      }}
     >
       {/* Logo */}
       <Link to="/" className="font-bold text-xl text-primary shrink-0">
@@ -49,8 +52,8 @@ export function Header() {
 
       {/* Now Playing Pill */}
       {currentTrack && (
-        <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1.5">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-sm font-medium truncate max-w-32">
             {currentTrack.title}
           </span>
