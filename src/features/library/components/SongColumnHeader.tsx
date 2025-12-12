@@ -16,36 +16,37 @@ export function SongColumnHeader({ column, label, className }: SongColumnHeaderP
 
   const isActive = sortColumn === column;
 
-  // Generate accessible label that includes sort state
-  const ariaLabel = isActive
-    ? `Sort by ${label} - Currently ${sortDirection === 'asc' ? 'ascending' : 'descending'}`
-    : `Sort by ${label}`;
-
-  // Determine aria-sort value
+  // Determine aria-sort value for the column header
   let ariaSort: 'ascending' | 'descending' | 'none' = 'none';
   if (isActive) {
     ariaSort = sortDirection === 'asc' ? 'ascending' : 'descending';
   }
 
+  // Generate accessible label that includes sort state
+  const ariaLabel = isActive
+    ? `Sort by ${label}, currently sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}`
+    : `Sort by ${label}`;
+
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className={cn('h-8 gap-1 -ml-3 font-medium text-muted-foreground hover:text-foreground', className)}
-      onClick={() => setSort(column)}
-      aria-label={ariaLabel}
-      aria-sort={ariaSort}
-    >
-      {label}
-      {isActive ? (
-        sortDirection === 'asc' ? (
-          <ArrowUp className="h-3 w-3" />
+    <div role="columnheader" aria-sort={ariaSort} className={cn('inline-flex', className)}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 gap-1 -ml-3 font-medium text-muted-foreground hover:text-foreground"
+        onClick={() => setSort(column)}
+        aria-label={ariaLabel}
+      >
+        {label}
+        {isActive ? (
+          sortDirection === 'asc' ? (
+            <ArrowUp className="h-3 w-3" />
+          ) : (
+            <ArrowDown className="h-3 w-3" />
+          )
         ) : (
-          <ArrowDown className="h-3 w-3" />
-        )
-      ) : (
-        <ArrowUpDown className="h-3 w-3 opacity-50" />
-      )}
-    </Button>
+          <ArrowUpDown className="h-3 w-3 opacity-50" />
+        )}
+      </Button>
+    </div>
   );
 }
