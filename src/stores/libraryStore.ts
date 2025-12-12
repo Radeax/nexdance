@@ -10,6 +10,10 @@ import {
 } from '@/services/storage/trackStorage';
 import { getAllDanceStyles } from '@/services/storage/danceStyleStorage';
 
+// Sort types
+export type SortColumn = 'title' | 'artist' | 'bpm' | 'duration' | 'danceStyle';
+export type SortDirection = 'asc' | 'desc';
+
 export interface LibraryState {
   // Track cache
   tracks: Track[];
@@ -27,6 +31,10 @@ export interface LibraryState {
 
   // Filter: show only unassigned tracks
   showUnassignedOnly: boolean;
+
+  // Sorting
+  sortColumn: SortColumn;
+  sortDirection: SortDirection;
 
   // Loading states
   isLoading: boolean;
@@ -50,6 +58,9 @@ export interface LibraryActions {
   setSearchQuery: (query: string) => void;
   setShowUnassignedOnly: (show: boolean) => void;
 
+  // Sorting
+  setSort: (column: SortColumn) => void;
+
   // Helpers
   getTrackById: (id: string) => Track | undefined;
   getDanceStyleById: (id: string) => DanceStyle | undefined;
@@ -64,6 +75,8 @@ const initialState: LibraryState = {
   filteredTracks: [],
   searchQuery: '',
   showUnassignedOnly: false,
+  sortColumn: 'title',
+  sortDirection: 'asc',
   isLoading: false,
   isLoadingTracks: false,
   error: null,
@@ -82,6 +95,43 @@ function filterTracksBySearch(tracks: Track[], query: string): Track[] {
   );
 }
 
+// Helper to sort tracks
+function sortTracks(
+  tracks: Track[],
+  column: SortColumn,
+  direction: SortDirection,
+  getDanceStyleById: (id: string) => DanceStyle | undefined
+): Track[] {
+  const sorted = [...tracks].sort((a, b) => {
+    let comparison = 0;
+
+    switch (column) {
+      case 'title':
+        comparison = a.title.localeCompare(b.title);
+        break;
+      case 'artist':
+        comparison = a.artist.localeCompare(b.artist);
+        break;
+      case 'bpm':
+        comparison = (a.bpm || 0) - (b.bpm || 0);
+        break;
+      case 'duration':
+        comparison = a.duration - b.duration;
+        break;
+      case 'danceStyle': {
+        const styleA = getDanceStyleById(a.primaryDanceStyleId)?.name || '';
+        const styleB = getDanceStyleById(b.primaryDanceStyleId)?.name || '';
+        comparison = styleA.localeCompare(styleB);
+        break;
+      }
+    }
+
+    return direction === 'asc' ? comparison : -comparison;
+  });
+
+  return sorted;
+}
+
 export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get) => ({
   ...initialState,
 
@@ -96,10 +146,14 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
       const tracks = await getAllTracks();
       const tracksById = new Map(tracks.map((track) => [track.id, track]));
 
+      const { searchQuery, sortColumn, sortDirection } = get();
+      let filtered = filterTracksBySearch(tracks, searchQuery);
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
+
       set({
         tracks,
         tracksById,
-        filteredTracks: filterTracksBySearch(tracks, get().searchQuery),
+        filteredTracks: filtered,
         isLoading: false,
       });
     } catch (error) {
@@ -124,16 +178,18 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
     try {
       await saveTrack(track);
 
-      set((state) => {
-        const newTracks = [...state.tracks, track];
-        const newTracksById = new Map(state.tracksById);
-        newTracksById.set(track.id, track);
+      const { tracks, tracksById, searchQuery, sortColumn, sortDirection } = get();
+      const newTracks = [...tracks, track];
+      const newTracksById = new Map(tracksById);
+      newTracksById.set(track.id, track);
 
-        return {
-          tracks: newTracks,
-          tracksById: newTracksById,
-          filteredTracks: filterTracksBySearch(newTracks, state.searchQuery),
-        };
+      let filtered = filterTracksBySearch(newTracks, searchQuery);
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
+
+      set({
+        tracks: newTracks,
+        tracksById: newTracksById,
+        filteredTracks: filtered,
       });
     } catch (error) {
       console.error('Failed to add track:', error);
@@ -145,16 +201,18 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
     try {
       await saveTrack(track);
 
-      set((state) => {
-        const newTracks = state.tracks.map((t) => (t.id === track.id ? track : t));
-        const newTracksById = new Map(state.tracksById);
-        newTracksById.set(track.id, track);
+      const { tracks, tracksById, searchQuery, sortColumn, sortDirection } = get();
+      const newTracks = tracks.map((t) => (t.id === track.id ? track : t));
+      const newTracksById = new Map(tracksById);
+      newTracksById.set(track.id, track);
 
-        return {
-          tracks: newTracks,
-          tracksById: newTracksById,
-          filteredTracks: filterTracksBySearch(newTracks, state.searchQuery),
-        };
+      let filtered = filterTracksBySearch(newTracks, searchQuery);
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
+
+      set({
+        tracks: newTracks,
+        tracksById: newTracksById,
+        filteredTracks: filtered,
       });
     } catch (error) {
       console.error('Failed to update track:', error);
@@ -166,16 +224,18 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
     try {
       await deleteTrack(trackId);
 
-      set((state) => {
-        const newTracks = state.tracks.filter((t) => t.id !== trackId);
-        const newTracksById = new Map(state.tracksById);
-        newTracksById.delete(trackId);
+      const { tracks, tracksById, searchQuery, sortColumn, sortDirection } = get();
+      const newTracks = tracks.filter((t) => t.id !== trackId);
+      const newTracksById = new Map(tracksById);
+      newTracksById.delete(trackId);
 
-        return {
-          tracks: newTracks,
-          tracksById: newTracksById,
-          filteredTracks: filterTracksBySearch(newTracks, state.searchQuery),
-        };
+      let filtered = filterTracksBySearch(newTracks, searchQuery);
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
+
+      set({
+        tracks: newTracks,
+        tracksById: newTracksById,
+        filteredTracks: filtered,
       });
     } catch (error) {
       console.error('Failed to remove track:', error);
@@ -190,12 +250,16 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
       const tracks = await getAllTracks();
       const tracksById = new Map(tracks.map((track) => [track.id, track]));
 
-      set((state) => ({
+      const { searchQuery, sortColumn, sortDirection } = get();
+      let filtered = filterTracksBySearch(tracks, searchQuery);
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
+
+      set({
         tracks,
         tracksById,
-        filteredTracks: filterTracksBySearch(tracks, state.searchQuery),
+        filteredTracks: filtered,
         isLoadingTracks: false,
-      }));
+      });
     } catch (error) {
       console.error('Failed to refresh tracks:', error);
       set({ isLoadingTracks: false });
@@ -206,18 +270,27 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
     set({ selectedDanceStyleId: styleId, isLoadingTracks: true });
 
     try {
-      let filteredTracks: Track[];
+      const { searchQuery, showUnassignedOnly, sortColumn, sortDirection } = get();
+      let filtered: Track[];
 
       if (styleId) {
-        filteredTracks = await getTracksByDanceStyle(styleId);
+        filtered = await getTracksByDanceStyle(styleId);
       } else {
-        filteredTracks = get().tracks;
+        filtered = get().tracks;
       }
 
-      // Apply search filter on top
-      filteredTracks = filterTracksBySearch(filteredTracks, get().searchQuery);
+      // Apply search filter
+      filtered = filterTracksBySearch(filtered, searchQuery);
 
-      set({ filteredTracks, isLoadingTracks: false });
+      // Apply unassigned filter
+      if (showUnassignedOnly) {
+        filtered = filtered.filter((t) => !t.primaryDanceStyleId);
+      }
+
+      // Apply sorting
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
+
+      set({ filteredTracks: filtered, isLoadingTracks: false });
     } catch (error) {
       console.error('Failed to filter tracks:', error);
       set({ isLoadingTracks: false });
@@ -225,7 +298,7 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
   },
 
   setSearchQuery: (query) => {
-    const { tracks, selectedDanceStyleId, showUnassignedOnly } = get();
+    const { tracks, selectedDanceStyleId, showUnassignedOnly, sortColumn, sortDirection } = get();
 
     set({ searchQuery: query });
 
@@ -238,12 +311,13 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
       if (showUnassignedOnly) {
         filtered = filtered.filter((t) => !t.primaryDanceStyleId);
       }
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
       set({ filteredTracks: filtered });
     }
   },
 
   setShowUnassignedOnly: (show) => {
-    const { tracks, searchQuery, selectedDanceStyleId } = get();
+    const { tracks, searchQuery, selectedDanceStyleId, sortColumn, sortDirection } = get();
 
     set({ showUnassignedOnly: show });
 
@@ -255,8 +329,25 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
       if (show) {
         filtered = filtered.filter((t) => !t.primaryDanceStyleId);
       }
+      filtered = sortTracks(filtered, sortColumn, sortDirection, get().getDanceStyleById);
       set({ filteredTracks: filtered });
     }
+  },
+
+  setSort: (column) => {
+    const { sortColumn, sortDirection, filteredTracks } = get();
+
+    // Toggle direction if same column, otherwise default to ascending
+    const newDirection: SortDirection =
+      column === sortColumn ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+
+    const sorted = sortTracks(filteredTracks, column, newDirection, get().getDanceStyleById);
+
+    set({
+      sortColumn: column,
+      sortDirection: newDirection,
+      filteredTracks: sorted,
+    });
   },
 
   getTrackById: (id) => get().tracksById.get(id),
