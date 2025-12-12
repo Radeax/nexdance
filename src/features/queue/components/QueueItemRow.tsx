@@ -82,14 +82,16 @@ export function QueueItemRow({ item, isNowPlaying }: QueueItemRowProps) {
       )}
       onClick={handleClick}
     >
-      {/* Drag handle */}
+      {/* Drag handle - ⋮⋮ two vertical columns per DDR-002 */}
       <button
-        className="p-1 touch-none cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
+        className="p-1 touch-none cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground flex gap-0.5"
         {...attributes}
         {...listeners}
         onClick={(e) => e.stopPropagation()}
+        aria-label="Reorder"
       >
-        <GripVertical className="h-4 w-4" />
+        <GripVertical className="h-4 w-3" />
+        <GripVertical className="h-4 w-3 -ml-1.5" />
       </button>
 
       {/* Now playing indicator */}

@@ -1,6 +1,8 @@
 import { Search, Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { useLibraryStore } from '@/stores/libraryStore';
 import { useUIStore } from '@/stores/uiStore';
 
@@ -11,6 +13,8 @@ interface SongListHeaderProps {
 export function SongListHeader({ trackCount }: SongListHeaderProps) {
   const searchQuery = useLibraryStore((state) => state.searchQuery);
   const setSearchQuery = useLibraryStore((state) => state.setSearchQuery);
+  const showUnassignedOnly = useLibraryStore((state) => state.showUnassignedOnly);
+  const setShowUnassignedOnly = useLibraryStore((state) => state.setShowUnassignedOnly);
   const openModal = useUIStore((state) => state.openModal);
 
   return (
@@ -24,6 +28,18 @@ export function SongListHeader({ trackCount }: SongListHeaderProps) {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9"
         />
+      </div>
+
+      {/* Unassigned only filter */}
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id="unassigned-filter"
+          checked={showUnassignedOnly}
+          onCheckedChange={(checked) => setShowUnassignedOnly(checked === true)}
+        />
+        <Label htmlFor="unassigned-filter" className="text-sm cursor-pointer">
+          Unassigned only
+        </Label>
       </div>
 
       {/* Track count */}

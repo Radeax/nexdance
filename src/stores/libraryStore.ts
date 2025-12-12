@@ -25,6 +25,9 @@ export interface LibraryState {
   // Search
   searchQuery: string;
 
+  // Filter: show only unassigned tracks
+  showUnassignedOnly: boolean;
+
   // Loading states
   isLoading: boolean;
   isLoadingTracks: boolean;
@@ -45,6 +48,7 @@ export interface LibraryActions {
   // Filtering
   selectDanceStyle: (styleId: string | null) => Promise<void>;
   setSearchQuery: (query: string) => void;
+  setShowUnassignedOnly: (show: boolean) => void;
 
   // Helpers
   getTrackById: (id: string) => Track | undefined;
@@ -59,6 +63,7 @@ const initialState: LibraryState = {
   selectedDanceStyleId: null,
   filteredTracks: [],
   searchQuery: '',
+  showUnassignedOnly: false,
   isLoading: false,
   isLoadingTracks: false,
   error: null,
@@ -220,7 +225,7 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
   },
 
   setSearchQuery: (query) => {
-    const { tracks, selectedDanceStyleId } = get();
+    const { tracks, selectedDanceStyleId, showUnassignedOnly } = get();
 
     set({ searchQuery: query });
 
@@ -229,7 +234,28 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
     if (selectedDanceStyleId) {
       get().selectDanceStyle(selectedDanceStyleId);
     } else {
-      set({ filteredTracks: filterTracksBySearch(tracks, query) });
+      let filtered = filterTracksBySearch(tracks, query);
+      if (showUnassignedOnly) {
+        filtered = filtered.filter((t) => !t.primaryDanceStyleId);
+      }
+      set({ filteredTracks: filtered });
+    }
+  },
+
+  setShowUnassignedOnly: (show) => {
+    const { tracks, searchQuery, selectedDanceStyleId } = get();
+
+    set({ showUnassignedOnly: show });
+
+    // Re-filter with new unassigned filter
+    if (selectedDanceStyleId) {
+      get().selectDanceStyle(selectedDanceStyleId);
+    } else {
+      let filtered = filterTracksBySearch(tracks, searchQuery);
+      if (show) {
+        filtered = filtered.filter((t) => !t.primaryDanceStyleId);
+      }
+      set({ filteredTracks: filtered });
     }
   },
 

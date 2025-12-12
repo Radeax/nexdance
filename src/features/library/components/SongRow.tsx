@@ -1,10 +1,11 @@
-import { Play, Pause, Plus, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Play, Pause, Plus, MoreHorizontal, Trash2, Pencil, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DanceBadge } from '@/components/ui/dance-badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useQueueStore } from '@/stores/queueStore';
@@ -61,9 +62,10 @@ export function SongRow({ track }: SongRowProps) {
     <div
       className={cn(
         'flex items-center gap-4 px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer group',
-        isCurrentTrack && 'bg-primary/10'
+        isCurrentTrack && 'bg-blue-50 dark:bg-blue-900/20'
       )}
       onClick={handleClick}
+      aria-current={isCurrentTrack ? 'true' : undefined}
     >
       {/* Play/Pause button (shown on hover) */}
       <Button
@@ -82,12 +84,17 @@ export function SongRow({ track }: SongRowProps) {
         )}
       </Button>
 
+      {/* Now playing indicator (blue dot) */}
+      {isCurrentTrack && (
+        <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+      )}
+
       {/* Track info */}
       <div className="flex-1 min-w-0">
         <p
           className={cn(
             'truncate font-medium',
-            isCurrentTrack && 'text-primary'
+            isCurrentTrack && 'text-blue-600 dark:text-blue-400'
           )}
         >
           {track.title}
@@ -133,12 +140,32 @@ export function SongRow({ track }: SongRowProps) {
             ) : (
               <Play className="h-4 w-4 mr-2" />
             )}
-            {isCurrentTrack && isPlaying ? 'Pause' : 'Play Now'}
+            {isCurrentTrack && isPlaying ? 'Pause' : 'Play'}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleClick}>
             <Plus className="h-4 w-4 mr-2" />
             Add to Queue
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openModal('trackEdit', { trackId: track.id });
+            }}
+          >
+            <Pencil className="h-4 w-4 mr-2" />
+            Edit Details...
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openModal('setDanceStyle', { trackId: track.id });
+            }}
+          >
+            <Music className="h-4 w-4 mr-2" />
+            Set Dance Style
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
             onClick={(e) => {
