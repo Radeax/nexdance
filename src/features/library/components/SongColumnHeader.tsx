@@ -16,12 +16,26 @@ export function SongColumnHeader({ column, label, className }: SongColumnHeaderP
 
   const isActive = sortColumn === column;
 
+  // Generate accessible label that includes sort state
+  const ariaLabel = isActive
+    ? `Sort by ${label} - Currently ${sortDirection === 'asc' ? 'ascending' : 'descending'}`
+    : `Sort by ${label}`;
+
+  // Determine aria-sort value
+  const ariaSort = isActive
+    ? sortDirection === 'asc'
+      ? ('ascending' as const)
+      : ('descending' as const)
+    : ('none' as const);
+
   return (
     <Button
       variant="ghost"
       size="sm"
       className={cn('h-8 gap-1 -ml-3 font-medium text-muted-foreground hover:text-foreground', className)}
       onClick={() => setSort(column)}
+      aria-label={ariaLabel}
+      aria-sort={ariaSort}
     >
       {label}
       {isActive ? (
