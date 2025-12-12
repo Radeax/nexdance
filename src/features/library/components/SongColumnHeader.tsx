@@ -2,6 +2,7 @@ import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLibraryStore, type SortColumn } from '@/stores/libraryStore';
 import { cn } from '@/lib/utils';
+import { useId } from 'react';
 
 interface SongColumnHeaderProps {
   column: SortColumn;
@@ -22,8 +23,8 @@ export function SongColumnHeader({ column, label, className }: SongColumnHeaderP
     ariaSort = sortDirection === 'asc' ? 'ascending' : 'descending';
   }
 
-  // Generate unique ID for the description element
-  const descriptionId = `sort-description-${column}`;
+  // Generate unique ID for the description element using React's useId
+  const descriptionId = useId();
 
   // Generate description text for the sort state
   const sortDescription = isActive
