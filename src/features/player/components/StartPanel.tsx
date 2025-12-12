@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { usePlayerStore } from '@/stores/playerStore';
+import { formatTime, parseTime } from '@/lib/time-utils';
 
 export function StartPanel() {
   const currentTime = usePlayerStore((state) => state.currentTime);
@@ -16,22 +17,6 @@ export function StartPanel() {
   const [fadeInEnabled, setFadeInEnabled] = useState(false);
   const [startDelay, setStartDelay] = useState(3);
   const [startDelayEnabled, setStartDelayEnabled] = useState(false);
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const parseTime = (timeStr: string): number => {
-    const parts = timeStr.split(':');
-    if (parts.length === 2) {
-      const mins = parseInt(parts[0], 10) || 0;
-      const secs = parseInt(parts[1], 10) || 0;
-      return mins * 60 + secs;
-    }
-    return parseInt(timeStr, 10) || 0;
-  };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseTime(e.target.value);
