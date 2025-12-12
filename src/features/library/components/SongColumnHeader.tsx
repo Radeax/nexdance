@@ -22,10 +22,13 @@ export function SongColumnHeader({ column, label, className }: SongColumnHeaderP
     ariaSort = sortDirection === 'asc' ? 'ascending' : 'descending';
   }
 
-  // Generate accessible label that includes sort state
-  const ariaLabel = isActive
-    ? `Sort by ${label}, currently sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}`
-    : `Sort by ${label}`;
+  // Generate unique ID for the description element
+  const descriptionId = `sort-description-${column}`;
+
+  // Generate description text for the sort state
+  const sortDescription = isActive
+    ? `Currently sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}`
+    : 'Not sorted';
 
   return (
     <div role="columnheader" aria-sort={ariaSort} className={cn('inline-flex', className)}>
@@ -34,7 +37,8 @@ export function SongColumnHeader({ column, label, className }: SongColumnHeaderP
         size="sm"
         className="h-8 gap-1 -ml-3 font-medium text-muted-foreground hover:text-foreground"
         onClick={() => setSort(column)}
-        aria-label={ariaLabel}
+        aria-describedby={descriptionId}
+        aria-pressed={isActive}
       >
         {label}
         {isActive ? (
@@ -47,6 +51,10 @@ export function SongColumnHeader({ column, label, className }: SongColumnHeaderP
           <ArrowUpDown className="h-3 w-3 opacity-50" />
         )}
       </Button>
+      {/* Visually hidden description for screen readers */}
+      <span id={descriptionId} className="sr-only">
+        {sortDescription}
+      </span>
     </div>
   );
 }
