@@ -22,11 +22,10 @@ export function SongColumnHeader({ column, label, className }: SongColumnHeaderP
     : `Sort by ${label}`;
 
   // Determine aria-sort value
-  const ariaSort = isActive
-    ? sortDirection === 'asc'
-      ? ('ascending' as const)
-      : ('descending' as const)
-    : ('none' as const);
+  let ariaSort: 'ascending' | 'descending' | 'none' = 'none';
+  if (isActive) {
+    ariaSort = sortDirection === 'asc' ? 'ascending' : 'descending';
+  }
 
   return (
     <Button
