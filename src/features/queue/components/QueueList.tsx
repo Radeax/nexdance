@@ -60,7 +60,7 @@ export function QueueList({ items, currentIndex }: QueueListProps) {
         items={items.map((item) => item.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="divide-y">
+        <div className="p-2 space-y-1">
           {items.map((item, index) => (
             <QueueItemRow
               key={item.id}

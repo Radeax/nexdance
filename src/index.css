@@ -42,96 +42,138 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --radius: 1.25rem;
+  --background: #f8fafc;
 
-  /* App Background Gradient */
-  --color-bg-app: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 50%, #e3f2fd 100%);
+  /* Brand Colors - Green (accent only) */
+  --color-brand: #10b981;
+  --color-brand-dark: #059669;
+  --color-brand-light: #34d399;
+
+  /* App Background - Neutral soft gray gradient */
+  --color-bg-app: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   --color-bg-panel: rgba(255, 255, 255, 0.85);
+  --color-bg-panel-solid: #ffffff;
 
   /* Navigation Icon Colors */
-  --color-nav-dance: #fbbf24;
-  --color-nav-library: #60a5fa;
-  --color-nav-playlists: #a78bfa;
-  --color-nav-settings: #2dd4bf;
+  --color-nav-dance: #10b981;
+  --color-nav-library: #3b82f6;
+  --color-nav-playlists: #a855f7;
+  --color-nav-settings: #6b7280;
 
-  /* Progress Bar */
-  --color-playback-gradient: linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%);
+  /* Progress Bar - Green gradient (accent) */
+  --color-playback-gradient: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  --color-progress-track: rgba(148, 163, 184, 0.3);
 
-  /* Transport Buttons */
-  --color-fade-next: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-  --color-fade-pause: linear-gradient(135deg, #f472b6 0%, #fb7185 100%);
-  --color-tempo-normal: #fb923c;
-  --color-tempo-modified: #ef4444;
+  /* Category Tab Gradient - Green (accent) */
+  --color-tab-active: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --color-tab-shadow: rgba(16, 185, 129, 0.25);
 
-  /* Shadows */
-  --shadow-elevation: 0 8px 32px rgba(99, 102, 241, 0.12);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* Shadows - Neutral */
+  --shadow-elevation: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-panel: 0 4px 32px rgba(0, 0, 0, 0.08);
+
+  /* Panel styling */
+  --panel-radius: 20px;
+  --panel-blur: 12px;
+
+  /* Text colors */
+  --foreground: #1a1a2e;
+  --card: #ffffff;
+  --card-foreground: #1a1a2e;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a2e;
+
+  /* Primary is green - for accents only */
+  --primary: #059669;
+  --primary-foreground: #ffffff;
+
+  /* Secondary/Muted - Neutral grays */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #1a1a2e;
+  --muted: #f1f5f9;
+  --muted-foreground: #6b7280;
+
+  /* Accent - Green tint for active nav items */
+  --accent: rgba(16, 185, 129, 0.08);
+  --accent-foreground: #059669;
+
+  --destructive: #ef4444;
+
+  /* Borders - Neutral slate */
+  --border: rgba(148, 163, 184, 0.3);
+  --input: rgba(255, 255, 255, 0.8);
+  --ring: #10b981;
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sidebar - Neutral */
+  --sidebar: rgba(255, 255, 255, 0.85);
+  --sidebar-foreground: #1a1a2e;
+  --sidebar-primary: #059669;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(16, 185, 129, 0.08);
+  --sidebar-accent-foreground: #059669;
+  --sidebar-border: rgba(148, 163, 184, 0.3);
+  --sidebar-ring: #10b981;
 }
 
 .dark {
-  --color-bg-app: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a5f 100%);
-  --color-bg-panel: rgba(30, 27, 75, 0.85);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Dark mode - Neutral zinc-black */
+  --color-bg-app: linear-gradient(135deg, #09090b 0%, #18181b 100%);
+  --color-bg-panel: rgba(24, 24, 27, 0.9);
+  --color-bg-panel-solid: #18181b;
+
+  /* Progress Bar - Green accent */
+  --color-progress-track: rgba(255, 255, 255, 0.1);
+
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --card: rgba(24, 24, 27, 0.9);
+  --card-foreground: #f4f4f5;
+  --popover: #27272a;
+  --popover-foreground: #f4f4f5;
+
+  /* Primary is green - for accents only */
+  --primary: #10b981;
+  --primary-foreground: #09090b;
+
+  /* Secondary/Muted - Neutral zinc */
+  --secondary: rgba(255, 255, 255, 0.05);
+  --secondary-foreground: #f4f4f5;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #a1a1aa;
+
+  /* Accent - Green tint for active nav items */
+  --accent: rgba(16, 185, 129, 0.1);
+  --accent-foreground: #10b981;
+
+  --destructive: #ef4444;
+
+  /* Borders - White at low opacity */
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.05);
+  --ring: #10b981;
+
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Sidebar - Neutral zinc */
+  --sidebar: rgba(24, 24, 27, 0.9);
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: #10b981;
+  --sidebar-primary-foreground: #09090b;
+  --sidebar-accent: rgba(16, 185, 129, 0.1);
+  --sidebar-accent-foreground: #10b981;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #10b981;
 }
 
 @layer base {

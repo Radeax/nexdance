@@ -3,6 +3,7 @@ import { PanelCard } from './PanelCard';
 import { NumericStepper } from '@/components/ui/numeric-stepper';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { usePlayerStore } from '@/stores/playerStore';
 
 export function EndPanel() {
@@ -19,6 +20,21 @@ export function EndPanel() {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const parseTime = (timeStr: string): number => {
+    const parts = timeStr.split(':');
+    if (parts.length === 2) {
+      const mins = Math.max(0, parseInt(parts[0], 10) || 0);
+      const secs = Math.min(59, Math.max(0, parseInt(parts[1], 10) || 0));
+      return mins * 60 + secs;
+    }
+    return Math.max(0, parseInt(timeStr, 10) || 0);
+  };
+
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseTime(e.target.value);
+    setEndTime(value);
   };
 
   const handleSetNow = () => {
@@ -39,18 +55,23 @@ export function EndPanel() {
             <span className="text-sm">On</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-mono w-12">{formatTime(endTime)}</span>
+            <Input
+              type="text"
+              value={formatTime(endTime)}
+              onChange={handleTimeChange}
+              className="w-16 h-8 text-sm font-mono text-center px-2"
+            />
             <Button variant="outline" size="sm" onClick={handleSetNow}>
               Set = Now
             </Button>
           </div>
         </div>
 
-        {/* Fade out */}
+        {/* Fade Out Duration */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Switch checked={fadeOutEnabled} onCheckedChange={setFadeOutEnabled} />
-            <span className="text-sm">Fade out</span>
+            <span className="text-sm">Fade Out Duration</span>
           </div>
           <NumericStepper
             value={fadeOut}
@@ -63,13 +84,10 @@ export function EndPanel() {
           />
         </div>
 
-        {/* Pause after */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Switch checked={pauseAfter} onCheckedChange={setPauseAfter} />
-            <span className="text-sm">Pause</span>
-          </div>
-          <span className="text-xs text-muted-foreground">Stop after this song</span>
+        {/* Pause Autoplay - single column */}
+        <div className="flex items-center gap-2">
+          <Switch checked={pauseAfter} onCheckedChange={setPauseAfter} />
+          <span className="text-sm">Pause Autoplay</span>
         </div>
       </div>
     </PanelCard>

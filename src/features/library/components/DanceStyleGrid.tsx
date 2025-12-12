@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import { useLibraryStore } from '@/stores/libraryStore';
 import { DanceStyleCard } from './DanceStyleCard';
 
@@ -6,9 +7,8 @@ interface DanceStyleGridProps {
 }
 
 export function DanceStyleGrid({ danceStyleIds }: DanceStyleGridProps) {
+  const navigate = useNavigate();
   const danceStyles = useLibraryStore((state) => state.danceStyles);
-  const selectedStyleId = useLibraryStore((state) => state.selectedDanceStyleId);
-  const selectDanceStyle = useLibraryStore((state) => state.selectDanceStyle);
   const tracks = useLibraryStore((state) => state.tracks);
 
   // Get dance styles for this group
@@ -26,12 +26,8 @@ export function DanceStyleGrid({ danceStyleIds }: DanceStyleGridProps) {
   };
 
   const handleStyleClick = (styleId: string) => {
-    // Toggle: click again to deselect
-    if (selectedStyleId === styleId) {
-      selectDanceStyle(null);
-    } else {
-      selectDanceStyle(styleId);
-    }
+    // Navigate to Library with dance filter pre-applied
+    navigate(`/library?dance=${styleId}`);
   };
 
   if (groupStyles.length === 0) {
@@ -51,7 +47,7 @@ export function DanceStyleGrid({ danceStyleIds }: DanceStyleGridProps) {
               key={style.id}
               style={style}
               trackCount={getTrackCount(style.id)}
-              isSelected={selectedStyleId === style.id}
+              isSelected={false}
               onClick={() => handleStyleClick(style.id)}
             />
           )

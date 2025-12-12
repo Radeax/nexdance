@@ -4,6 +4,7 @@ import { useAudioSync } from '@/hooks/useAudioSync';
 import { Toaster } from '@/components/ui/sonner';
 import { ImportModal } from '@/features/import/components/ImportModal';
 import { DeleteTrackModal } from '@/features/library/components/DeleteTrackModal';
+import { SetDanceStyleModal } from '@/features/library/components/SetDanceStyleModal';
 
 function App() {
   // Initialize audio sync
@@ -14,6 +15,7 @@ function App() {
       <RouterProvider router={router} />
       <ImportModal />
       <DeleteTrackModal />
+      <SetDanceStyleModal />
       <Toaster />
     </>
   );

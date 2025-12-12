@@ -37,11 +37,11 @@ export function NumericStepper({
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="inline-flex items-center gap-1">
       <Button
         variant="outline"
         size="icon"
-        className="h-7 w-7"
+        className="h-[30px] w-[30px] rounded-lg"
         onClick={handleDecrement}
         disabled={disabled || value <= min}
       >
@@ -52,7 +52,7 @@ export function NumericStepper({
           type="number"
           value={value}
           onChange={handleInputChange}
-          className="w-12 h-7 text-center text-sm px-1"
+          className="w-[72px] h-9 text-center text-sm tabular-nums rounded-lg"
           disabled={disabled}
           min={min}
           max={max}
@@ -65,7 +65,7 @@ export function NumericStepper({
       <Button
         variant="outline"
         size="icon"
-        className="h-7 w-7"
+        className="h-[30px] w-[30px] rounded-lg"
         onClick={handleIncrement}
         disabled={disabled || value >= max}
       >

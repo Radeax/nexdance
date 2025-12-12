@@ -20,22 +20,22 @@ export function DanceStyleTabs() {
   );
 
   return (
-    <div className="border-b" style={{ background: 'var(--color-bg-panel)', backdropFilter: 'blur(8px)' }}>
+    <div className="flex flex-col h-full">
       {/* Category Tabs - Pill Style */}
-      <div className="flex items-center gap-2 px-4 py-3">
+      <div className="flex items-center gap-2 px-4 py-4 border-b border-border/50">
         {DEFAULT_NAVIGATION_GROUPS.map((group) => (
           <button
             key={group.id}
             onClick={() => setActiveGroup(group.id)}
             className={cn(
-              'px-4 py-1.5 rounded-[10px] text-sm font-medium transition-all',
+              'px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200',
               activeGroupId === group.id
-                ? 'text-white shadow-md border-transparent'
-                : 'bg-white/60 text-gray-500 border border-gray-200 hover:bg-white/90 dark:bg-white/10 dark:text-gray-300 dark:border-gray-600'
+                ? 'text-white shadow-lg'
+                : 'bg-white/80 dark:bg-white/5 text-gray-600 dark:text-gray-300 border border-border hover:bg-white dark:hover:bg-white/10 hover:shadow-md'
             )}
             style={activeGroupId === group.id ? {
-              background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)',
-              boxShadow: '0 2px 8px rgba(124, 58, 237, 0.3)'
+              background: 'var(--color-tab-active)',
+              boxShadow: '0 4px 12px var(--color-tab-shadow)'
             } : undefined}
           >
             {group.name}
@@ -44,7 +44,9 @@ export function DanceStyleTabs() {
       </div>
 
       {/* Dance Style Grid for selected category */}
-      {activeGroup && <DanceStyleGrid danceStyleIds={activeGroup.danceStyleIds} />}
+      <div className="flex-1 overflow-auto">
+        {activeGroup && <DanceStyleGrid danceStyleIds={activeGroup.danceStyleIds} />}
+      </div>
     </div>
   );
 }

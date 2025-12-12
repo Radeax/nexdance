@@ -147,7 +147,9 @@ export const useQueueStore = create<QueueState & QueueActions>()(
     jumpToIndex: (index) => {
       const { items } = get();
       if (index >= 0 && index < items.length) {
-        set({ currentIndex: index });
+        // Per DDR-002: Jumping removes all songs BEFORE the tapped song
+        const newItems = items.slice(index);
+        set({ items: newItems, currentIndex: 0 });
         get().persistQueue();
       }
     },

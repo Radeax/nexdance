@@ -9,7 +9,19 @@ export function LoopButton() {
     <Button
       variant="ghost"
       size="icon"
-      className={isLooping ? 'text-primary' : 'text-muted-foreground'}
+      className={
+        isLooping
+          ? 'text-white rounded-lg'
+          : 'text-muted-foreground rounded-lg'
+      }
+      style={
+        isLooping
+          ? {
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)',
+            }
+          : undefined
+      }
       onClick={() => setIsLooping(!isLooping)}
       title={isLooping ? 'Disable loop' : 'Enable loop'}
     >
