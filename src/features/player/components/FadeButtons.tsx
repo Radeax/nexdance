@@ -34,7 +34,7 @@ export function FadeButtons() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Fade to Next - Green like play button */}
+      {/* Fade out current track then skip to next */}
       <Button
         onClick={handleFadeToNext}
         className="h-9 px-4 rounded-full text-white font-medium text-sm border-none"
@@ -48,7 +48,7 @@ export function FadeButtons() {
         Fade → ⏭
       </Button>
 
-      {/* Fade to Pause - Same green as Fade to Next */}
+      {/* Fade out current track then pause */}
       <Button
         onClick={handleFadeToPause}
         className="h-9 px-4 rounded-full text-white font-medium text-sm border-none"

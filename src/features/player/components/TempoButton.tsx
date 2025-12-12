@@ -27,7 +27,7 @@ export function TempoButton() {
       >
         <Minus className="h-3 w-3" />
       </Button>
-      <span className="w-16 text-center font-semibold text-sm tabular-nums text-emerald-600 dark:text-emerald-400">
+      <span className="w-16 text-center font-semibold text-sm tabular-nums text-primary">
         {displayValue}×
       </span>
       <Button

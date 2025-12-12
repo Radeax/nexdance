@@ -26,11 +26,11 @@ export function StartPanel() {
   const parseTime = (timeStr: string): number => {
     const parts = timeStr.split(':');
     if (parts.length === 2) {
-      const mins = parseInt(parts[0], 10) || 0;
-      const secs = parseInt(parts[1], 10) || 0;
+      const mins = Math.max(0, parseInt(parts[0], 10) || 0);
+      const secs = Math.min(59, Math.max(0, parseInt(parts[1], 10) || 0));
       return mins * 60 + secs;
     }
-    return parseInt(timeStr, 10) || 0;
+    return Math.max(0, parseInt(timeStr, 10) || 0);
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {

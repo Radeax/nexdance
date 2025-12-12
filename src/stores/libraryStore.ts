@@ -282,8 +282,8 @@ export const useLibraryStore = create<LibraryState & LibraryActions>()((set, get
       // Apply search filter
       filtered = filterTracksBySearch(filtered, searchQuery);
 
-      // Apply unassigned filter
-      if (showUnassignedOnly) {
+      // Apply unassigned filter (only when no specific dance style is selected)
+      if (showUnassignedOnly && !styleId) {
         filtered = filtered.filter((t) => !t.primaryDanceStyleId);
       }
 

@@ -65,12 +65,6 @@
   --color-playback-gradient: linear-gradient(90deg, #10b981 0%, #059669 100%);
   --color-progress-track: rgba(148, 163, 184, 0.3);
 
-  /* Transport Buttons */
-  --color-fade-next: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-  --color-fade-pause: linear-gradient(135deg, #f472b6 0%, #fb7185 100%);
-  --color-tempo-normal: #fb923c;
-  --color-tempo-modified: #ef4444;
-
   /* Category Tab Gradient - Green (accent) */
   --color-tab-active: linear-gradient(135deg, #10b981 0%, #059669 100%);
   --color-tab-shadow: rgba(16, 185, 129, 0.25);
